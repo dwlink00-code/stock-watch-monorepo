@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "18166993710",
+    "project_id": "designli-test-2a061",
+    "storage_bucket": "designli-test-2a061.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18166993710:android:5cd0ddfcf7d035858920bf",
+        "android_client_info": {
+          "package_name": "com.designli.stockwatch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp86uk6ImQKEgCe_ahFYtz9OkaY9pOibs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

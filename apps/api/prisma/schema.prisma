@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AlertStatus {
+  ACTIVE
+  TRIGGERED
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  alerts       Alert[]
+  deviceTokens DeviceToken[]
+}
+
+model Alert {
+  id              String      @id @default(cuid())
+  symbol          String
+  targetPrice     Float
+  currentPrice    Float?
+  status          AlertStatus @default(ACTIVE)
+  triggeredAt     DateTime?
+  notificationSentAt DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([symbol, status])
+}
+
+model DeviceToken {
+  id         String   @id @default(cuid())
+  token      String   @unique
+  platform   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

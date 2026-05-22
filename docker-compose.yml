@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: stock_watch
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/stock_watch}
+      JWT_SECRET: ${JWT_SECRET:-super-secret-development-key}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      FINNHUB_API_KEY: ${FINNHUB_API_KEY:-replace_me}
+      FINNHUB_BASE_URL: https://finnhub.io/api/v1
+      ALERT_POLL_INTERVAL_MS: ${ALERT_POLL_INTERVAL_MS:-60000}
+      WEB_ORIGIN: ${WEB_ORIGIN:-*}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL:-}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY:-}
+    ports:
+      - "4000:4000"
+
+volumes:
+  postgres_data:

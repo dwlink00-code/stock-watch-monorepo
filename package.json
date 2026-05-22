@@ -1,0 +1,23 @@
+{
+  "name": "stock-watch-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack stock alert app with Expo and Node.js",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace api",
+    "dev:mobile": "npm run start --workspace mobile",
+    "build:api": "npm run build --workspace api",
+    "lint:api": "npm run lint --workspace api",
+    "test:api": "npm run test --workspace api",
+    "typecheck:mobile": "npm run typecheck --workspace mobile",
+    "prisma:generate": "npm run prisma:generate --workspace api",
+    "prisma:migrate": "npm run prisma:migrate --workspace api",
+    "prisma:seed": "npm run prisma:seed --workspace api"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
