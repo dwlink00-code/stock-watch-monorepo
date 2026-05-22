@@ -61,6 +61,16 @@ export function useRegisterPushToken(sessionToken: string | undefined) {
       }
 
       const Notifications = await import("expo-notifications");
+
+      if (Platform.OS === "android") {
+        await Notifications.setNotificationChannelAsync("price-alerts", {
+          name: "Price alerts",
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: "#22c55e",
+        });
+      }
+
       const permission = await Notifications.requestPermissionsAsync();
 
       console.log("[push] notification permission", {

@@ -49,12 +49,33 @@ export async function evaluateActiveAlerts() {
 
     const tokens = alert.user.deviceTokens.map((device) => device.token);
 
-    await sendPriceAlertNotification({
+    const notificationResult = await sendPriceAlertNotification({
       tokens,
       symbol: alert.symbol,
       targetPrice: alert.targetPrice,
       currentPrice: quote.currentPrice,
     });
+
+    if (notificationResult.skipped) {
+      console.warn("[alerts] notification skipped", {
+        alertId: alert.id,
+        symbol: alert.symbol,
+        reason:
+          tokens.length === 0 ? "no_device_tokens" : "firebase_not_configured",
+      });
+    } else if (notificationResult.sentCount === 0) {
+      console.warn("[alerts] notification send failed for all tokens", {
+        alertId: alert.id,
+        symbol: alert.symbol,
+        failureCount: notificationResult.failureCount ?? 0,
+      });
+    } else {
+      console.log("[alerts] notification sent", {
+        alertId: alert.id,
+        symbol: alert.symbol,
+        sentCount: notificationResult.sentCount,
+      });
+    }
 
     await prisma.alert.update({
       where: { id: alert.id },
@@ -62,7 +83,8 @@ export async function evaluateActiveAlerts() {
         currentPrice: quote.currentPrice,
         status: AlertStatus.TRIGGERED,
         triggeredAt: new Date(),
-        notificationSentAt: new Date(),
+        notificationSentAt:
+          notificationResult.sentCount > 0 ? new Date() : null,
       },
     });
 

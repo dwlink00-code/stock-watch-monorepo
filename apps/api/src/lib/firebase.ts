@@ -40,6 +40,7 @@ export async function sendPriceAlertNotification(input: {
   if (!app || input.tokens.length === 0) {
     return {
       sentCount: 0,
+      failureCount: 0,
       skipped: true,
     };
   }
@@ -56,10 +57,29 @@ export async function sendPriceAlertNotification(input: {
       currentPrice: input.currentPrice.toString(),
       type: "price-alert",
     },
+    android: {
+      priority: "high",
+      notification: {
+        channelId: "price-alerts",
+      },
+    },
   });
+
+  if (response.failureCount > 0) {
+    for (const [index, result] of response.responses.entries()) {
+      if (!result.success) {
+        console.error("[firebase] push failed", {
+          tokenPreview: `${input.tokens[index]?.slice(0, 12) ?? ""}...`,
+          error: result.error?.message,
+          code: result.error?.code,
+        });
+      }
+    }
+  }
 
   return {
     sentCount: response.successCount,
+    failureCount: response.failureCount,
     skipped: false,
   };
 }

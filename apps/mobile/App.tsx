@@ -119,6 +119,16 @@ export default function App() {
 
     async function configureNotifications() {
       const Notifications = await import("expo-notifications");
+      const { Platform } = await import("react-native");
+
+      if (Platform.OS === "android") {
+        await Notifications.setNotificationChannelAsync("price-alerts", {
+          name: "Price alerts",
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: "#22c55e",
+        });
+      }
 
       Notifications.setNotificationHandler({
         handleNotification: async () => ({
